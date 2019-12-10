@@ -51,8 +51,8 @@ constraint = [  sum(x , 1) == demand ,
         
 objective = sum(sum(x.*cost_transport , 1) , 2) + sum(wh_status.*cost_operating);
 
-ops = sdpsettings('solver','bnb','bnb.solver','fmincon');
-optimize(constraint , objective , ops)
+ops = sdpsettings('solver','mosek','verbose',1,'debug',1);
+optimize(constraint , objective , ops);
 %----------------------------------- log file ---------------------------
 fid = fopen('output2.txt','w');
 fprintf(fid,"Path transport:\n\t\t");
@@ -63,7 +63,7 @@ fprintf(fid,"\n");
 for a = 1:SIZE_WH
     fprintf(fid,"Warehouse[%d]:\t",a);
     for b = 1:SIZE_CUS
-        fprintf(fid,"  %d\t",value(x(a,b)));
+        fprintf(fid,"  %.2d\t",value(x(a,b)));
     end
     fprintf(fid,"\n");
 end
@@ -73,7 +73,7 @@ for a = 1:SIZE_WH
 end
 fprintf(fid,"\n");
 for a = 1:SIZE_WH
-    fprintf(fid,"  %d\t" ,value(wh_status(a)) );
+    fprintf(fid,"  %.2d\t" ,value(wh_status(a)) );
 end
 fprintf(fid,"\n\nTotal amount: %.5f\n" , value(sum(objective)));
 fclose(fid);
